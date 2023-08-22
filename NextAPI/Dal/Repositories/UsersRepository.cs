@@ -15,13 +15,20 @@ public class UsersRepository
     public User[] GetAll(int limit, int skip)
     {
         return _db.Users
+            .OrderBy(x => x.Id)
             .Skip(skip)
             .Take(limit)
             .ToArray();
     }
 
-    public User? GetById(int userId)
+    public async Task<User?> GetById(int userId)
     {
-        return _db.Users.Find(userId);
+        return await _db.Users.FindAsync(userId);
+    }
+
+    public async Task Update(User user)
+    {
+        _db.Users.Update(user);
+        await _db.SaveChangesAsync();
     }
 }

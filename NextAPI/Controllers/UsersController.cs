@@ -24,11 +24,28 @@ public class UsersController : ControllerBase
     
     [Route("/users/{userId}")]
     [HttpGet]
-    public IActionResult GetUser(int userId)
+    public async Task<IActionResult> GetUser(int userId)
     {
         try
         {
-            return Ok(_service.GetById(userId));
+            return Ok(await _service.GetById(userId));
+        }
+        catch
+        {
+            return BadRequest("Wrong user id");
+        }
+    }
+
+    [Route("/users/setStatus")]
+    [HttpPatch]
+    public async Task<IActionResult> SetStatus(SetStatusRequest request)
+    {
+        try
+        {
+            var user = await _service.GetById(request.UserId);
+            user.Status = request.Status;
+            await _service.Update(user);
+            return Ok();
         }
         catch
         {

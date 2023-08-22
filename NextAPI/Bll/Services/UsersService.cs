@@ -17,14 +17,19 @@ public class UsersService
         return _repository.GetAll(limit, skip);
     }
 
-    public User GetById(int userId)
+    public async Task<User> GetById(int userId)
     {
-        User? user = _repository.GetById(userId);
+        User? user = await _repository.GetById(userId);
         if (user == null)
         {
             throw new ArgumentOutOfRangeException();
         }
 
         return user;
+    }
+
+    public async Task Update(User user)
+    {
+        await _repository.Update(user);
     }
 }
