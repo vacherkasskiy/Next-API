@@ -1,0 +1,12 @@
+version: "1"
+services:
+  sehw-local:
+    image: postgres
+    restart: always
+    container_name: nextAPI
+    environment:
+      POSTGRES_USER: "vacherkasskiy"
+      POSTGRES_DB: "nextAPI"
+      POSTGRES_PASSWORD: "123456"
+    ports:
+      - 5432:5432
