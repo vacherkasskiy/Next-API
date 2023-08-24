@@ -1,5 +1,4 @@
 ﻿using NextAPI.Dal.Entities;
-using NextAPI.Data;
 
 namespace NextAPI.Dal.Repositories;
 

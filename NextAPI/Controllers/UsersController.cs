@@ -36,7 +36,7 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Route("/users/setStatus")]
+    [Route("/users/set_status")]
     [HttpPatch]
     public async Task<IActionResult> SetStatus(SetStatusRequest request)
     {

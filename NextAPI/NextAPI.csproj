@@ -23,7 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Bll\Models\" />
       <Folder Include="Responses\" />
     </ItemGroup>
 

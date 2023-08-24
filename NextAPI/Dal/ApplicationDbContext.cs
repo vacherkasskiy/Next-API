@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NextAPI.Dal.Entities;
 
-namespace NextAPI.Data;
+namespace NextAPI.Dal;
 
 public class ApplicationDbContext : DbContext
 {
@@ -10,4 +10,5 @@ public class ApplicationDbContext : DbContext
     }
     
     public DbSet<User> Users { get; set; }
+    public DbSet<Post> Posts { get; set; }
 }
