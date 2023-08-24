@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <Folder Include="Responses\" />
+      <Folder Include="Validators\UsersEndpoints\" />
     </ItemGroup>
 
 </Project>

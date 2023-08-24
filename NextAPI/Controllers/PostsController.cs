@@ -18,9 +18,9 @@ public class PostsController : ControllerBase
 
     [HttpGet]
     [Route("/posts/get_for/")]
-    public async Task<IActionResult> GetUserPosts([FromQuery] int userId)
+    public async Task<IActionResult> GetUserPosts([FromQuery]GetUserPostsRequest request)
     {
-        return Ok(await _service.GetUserPosts(userId));
+        return Ok(await _service.GetUserPosts(request.UserId));
     }
 
     [HttpPost]
