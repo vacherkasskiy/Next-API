@@ -17,10 +17,10 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/posts/get_for/")]
-    public async Task<IActionResult> GetUserPosts([FromQuery]GetUserPostsRequest request)
+    [Route("/posts/get_for/{userId}")]
+    public async Task<IActionResult> GetUserPosts(int userId)
     {
-        return Ok(await _service.GetUserPosts(request.UserId));
+        return Ok(await _service.GetUserPosts(userId));
     }
 
     [HttpPost]
