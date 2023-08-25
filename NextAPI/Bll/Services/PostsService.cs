@@ -1,25 +1,40 @@
-﻿using NextAPI.Bll.Models;
+﻿using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
-using NextAPI.Dal.Repositories;
+using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Bll.Services;
 
-public class PostsService
+public class PostsService : IOrientedService<Post>
 {
-    private readonly PostsRepository _repository;
+    private readonly IBaseRepository<Post> _repository;
 
-    public PostsService(PostsRepository repository)
+    public PostsService(IBaseRepository<Post> repository)
     {
         _repository = repository;
     }
 
-    public async Task<Post[]> GetUserPosts(int userId)
+    public async Task<Post[]> GetForUser(int userId)
     {
         var posts = await _repository.GetAll();
         return posts.Where(x => x.ReceiverId == userId).ToArray();
     }
 
-    public async Task<Post> Add(PostModel post)
+    public Task<Post[]> GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Post> GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task Update(Post item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Post> Add(Post post)
     {
         var newPost = await _repository.Add(post);
 

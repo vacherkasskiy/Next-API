@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NextAPI.Bll.Services;
+using NextAPI.Bll.Services.Interfaces;
+using NextAPI.Dal.Entities;
 using NextAPI.Requests.Users;
 using NextAPI.Responses.Users;
 
@@ -9,18 +10,18 @@ namespace NextAPI.Controllers;
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly UsersService _service;
+    private readonly IBaseService<User> _service;
     
-    public UsersController(UsersService service)
+    public UsersController(IBaseService<User> service)
     {
         _service = service;
     }
 
     [Route("/users")]
     [HttpGet]
-    public IActionResult GetUsers([FromQuery]GetUsersRequest request)
+    public async Task<IActionResult> GetUsers([FromQuery]GetUsersRequest request)
     {
-        var users = _service.GetAll();
+        var users = await _service.GetAll();
         return Ok(new GetUsersResponse
         (
             users

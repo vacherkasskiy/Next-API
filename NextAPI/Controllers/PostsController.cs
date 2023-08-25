@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NextAPI.Bll.Models;
-using NextAPI.Bll.Services;
+using NextAPI.Bll.Services.Interfaces;
+using NextAPI.Dal.Entities;
 using NextAPI.Requests.Posts;
 
 namespace NextAPI.Controllers;
@@ -9,9 +9,9 @@ namespace NextAPI.Controllers;
 [Route("[controller]")]
 public class PostsController : ControllerBase
 {
-    private readonly PostsService _service;
+    private readonly IOrientedService<Post> _service;
 
-    public PostsController(PostsService service)
+    public PostsController(IOrientedService<Post> service)
     {
         _service = service;
     }
@@ -20,7 +20,7 @@ public class PostsController : ControllerBase
     [Route("/posts/get_for/{userId}")]
     public async Task<IActionResult> GetUserPosts(int userId)
     {
-        return Ok(await _service.GetUserPosts(userId));
+        return Ok(await _service.GetForUser(userId));
     }
 
     [HttpPost]
@@ -29,10 +29,10 @@ public class PostsController : ControllerBase
     {
         try
         {
-            var post = await _service.Add(new PostModel(
-                request.AuthorId,
-                request.ReceiverId,
-                request.Text));
+            var post = await _service.Add(new Post{
+                AuthorId = request.AuthorId,
+                ReceiverId = request.ReceiverId,
+                Text = request.Text});
             return Ok();
         }
         catch

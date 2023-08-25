@@ -1,8 +1,10 @@
-﻿using NextAPI.Dal.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using NextAPI.Dal.Entities;
+using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Dal.Repositories;
 
-public class UsersRepository
+public class UsersRepository : IBaseRepository<User>
 {
     private readonly ApplicationDbContext _db;
 
@@ -11,11 +13,11 @@ public class UsersRepository
         _db = db;
     }
 
-    public User[] GetAll()
+    public async Task<User[]> GetAll()
     {
-        return _db.Users
+        return await _db.Users
             .OrderBy(x => x.Id)
-            .ToArray();
+            .ToArrayAsync();
     }
 
     public async Task<User?> GetById(int userId)
@@ -27,5 +29,10 @@ public class UsersRepository
     {
         _db.Users.Update(user);
         await _db.SaveChangesAsync();
+    }
+
+    public Task<User> Add(User item)
+    {
+        throw new NotImplementedException();
     }
 }

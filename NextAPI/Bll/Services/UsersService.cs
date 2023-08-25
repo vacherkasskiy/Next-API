@@ -1,20 +1,21 @@
-﻿using NextAPI.Dal.Entities;
-using NextAPI.Dal.Repositories;
+﻿using NextAPI.Bll.Services.Interfaces;
+using NextAPI.Dal.Entities;
+using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Bll.Services;
 
-public class UsersService
+public class UsersService : IBaseService<User>
 {
-    private readonly UsersRepository _repository;
+    private readonly IBaseRepository<User> _repository;
 
-    public UsersService(UsersRepository repository)
+    public UsersService(IBaseRepository<User> repository)
     {
         _repository = repository;
     }
 
-    public User[] GetAll()
+    public async Task<User[]> GetAll()
     {
-        return _repository.GetAll();
+        return await _repository.GetAll();
     }
 
     public async Task<User> GetById(int userId)
@@ -31,5 +32,10 @@ public class UsersService
     public async Task Update(User user)
     {
         await _repository.Update(user);
+    }
+
+    public Task<User> Add(User item)
+    {
+        throw new NotImplementedException();
     }
 }
