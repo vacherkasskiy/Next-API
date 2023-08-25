@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services;
 using NextAPI.Requests.Users;
+using NextAPI.Responses.Users;
 
 namespace NextAPI.Controllers;
 
@@ -19,7 +20,15 @@ public class UsersController : ControllerBase
     [HttpGet]
     public IActionResult GetUsers([FromQuery]GetUsersRequest request)
     {
-        return Ok(_service.GetAll(request.Limit, request.Skip));
+        var users = _service.GetAll();
+        return Ok(new GetUsersResponse
+        (
+            users
+                .Skip(request.Skip)
+                .Take(request.Limit)
+                .ToArray(),
+            users.Length
+        ));
     }
     
     [Route("/users/{userId}")]

@@ -11,12 +11,10 @@ public class UsersRepository
         _db = db;
     }
 
-    public User[] GetAll(int limit, int skip)
+    public User[] GetAll()
     {
         return _db.Users
             .OrderBy(x => x.Id)
-            .Skip(skip)
-            .Take(limit)
             .ToArray();
     }
 

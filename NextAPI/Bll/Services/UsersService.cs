@@ -12,9 +12,9 @@ public class UsersService
         _repository = repository;
     }
 
-    public User[] GetAll(int limit, int skip)
+    public User[] GetAll()
     {
-        return _repository.GetAll(limit, skip);
+        return _repository.GetAll();
     }
 
     public async Task<User> GetById(int userId)
