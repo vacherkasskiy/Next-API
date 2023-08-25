@@ -1,6 +1,7 @@
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using NextAPI.Bll.Services;
+using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories;
@@ -33,8 +34,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IBaseRepository<User>, UsersRepository>();
 builder.Services.AddScoped<IBaseRepository<Post>, PostsRepository>();
 
-builder.Services.AddScoped<UsersService>();
-builder.Services.AddScoped<PostsService>();
+builder.Services.AddScoped<IBaseService<User>, UsersService>();
+builder.Services.AddScoped<IOrientedService<Post>, PostsService>();
 
 builder.Services.AddFluentValidation(conf =>
 {

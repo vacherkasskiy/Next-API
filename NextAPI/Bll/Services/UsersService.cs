@@ -1,9 +1,10 @@
-﻿using NextAPI.Dal.Entities;
+﻿using NextAPI.Bll.Services.Interfaces;
+using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Bll.Services;
 
-public class UsersService
+public class UsersService : IBaseService<User>
 {
     private readonly IBaseRepository<User> _repository;
 
@@ -31,5 +32,10 @@ public class UsersService
     public async Task Update(User user)
     {
         await _repository.Update(user);
+    }
+
+    public Task<User> Add(User item)
+    {
+        throw new NotImplementedException();
     }
 }
