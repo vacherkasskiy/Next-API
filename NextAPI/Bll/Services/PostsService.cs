@@ -1,14 +1,13 @@
-﻿using NextAPI.Bll.Models;
-using NextAPI.Dal.Entities;
-using NextAPI.Dal.Repositories;
+﻿using NextAPI.Dal.Entities;
+using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Bll.Services;
 
 public class PostsService
 {
-    private readonly PostsRepository _repository;
+    private readonly IBaseRepository<Post> _repository;
 
-    public PostsService(PostsRepository repository)
+    public PostsService(IBaseRepository<Post> repository)
     {
         _repository = repository;
     }
@@ -19,7 +18,7 @@ public class PostsService
         return posts.Where(x => x.ReceiverId == userId).ToArray();
     }
 
-    public async Task<Post> Add(PostModel post)
+    public async Task<Post> Add(Post post)
     {
         var newPost = await _repository.Add(post);
 

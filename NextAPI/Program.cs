@@ -2,7 +2,9 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using NextAPI.Bll.Services;
 using NextAPI.Dal;
+using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories;
+using NextAPI.Dal.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,13 +27,14 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddScoped<UsersService>();
-builder.Services.AddScoped<UsersRepository>();
-builder.Services.AddScoped<PostsService>();
-builder.Services.AddScoped<PostsRepository>();
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IBaseRepository<User>, UsersRepository>();
+builder.Services.AddScoped<IBaseRepository<Post>, PostsRepository>();
+
+builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<PostsService>();
 
 builder.Services.AddFluentValidation(conf =>
 {

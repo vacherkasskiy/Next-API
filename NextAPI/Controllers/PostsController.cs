@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Models;
 using NextAPI.Bll.Services;
+using NextAPI.Dal.Entities;
 using NextAPI.Requests.Posts;
 
 namespace NextAPI.Controllers;
@@ -29,10 +30,10 @@ public class PostsController : ControllerBase
     {
         try
         {
-            var post = await _service.Add(new PostModel(
-                request.AuthorId,
-                request.ReceiverId,
-                request.Text));
+            var post = await _service.Add(new Post{
+                AuthorId = request.AuthorId,
+                ReceiverId = request.ReceiverId,
+                Text = request.Text});
             return Ok();
         }
         catch

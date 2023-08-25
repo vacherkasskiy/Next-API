@@ -18,9 +18,9 @@ public class UsersController : ControllerBase
 
     [Route("/users")]
     [HttpGet]
-    public IActionResult GetUsers([FromQuery]GetUsersRequest request)
+    public async Task<IActionResult> GetUsers([FromQuery]GetUsersRequest request)
     {
-        var users = _service.GetAll();
+        var users = await _service.GetAll();
         return Ok(new GetUsersResponse
         (
             users

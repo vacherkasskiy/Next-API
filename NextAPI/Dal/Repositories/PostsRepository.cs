@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NextAPI.Bll.Models;
 using NextAPI.Dal.Entities;
+using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Dal.Repositories;
 
-public class PostsRepository
+public class PostsRepository : IBaseRepository<Post>
 {
     private readonly ApplicationDbContext _db;
 
@@ -15,10 +15,23 @@ public class PostsRepository
     
     public async Task<Post[]> GetAll()
     {
-        return await _db.Posts.Include(p => p.Author).Include(p => p.Receiver).ToArrayAsync();
+        return await _db.Posts
+            .Include(p => p.Author)
+            .Include(p => p.Receiver)
+            .ToArrayAsync();
     }
 
-    public async Task<Post> Add(PostModel post)
+    public Task<Post?> GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task Update(Post item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Post> Add(Post post)
     {
         var newPost = await _db.Posts.AddAsync(new Post
         {

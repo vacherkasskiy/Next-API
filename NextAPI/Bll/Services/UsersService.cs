@@ -1,20 +1,20 @@
 ﻿using NextAPI.Dal.Entities;
-using NextAPI.Dal.Repositories;
+using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Bll.Services;
 
 public class UsersService
 {
-    private readonly UsersRepository _repository;
+    private readonly IBaseRepository<User> _repository;
 
-    public UsersService(UsersRepository repository)
+    public UsersService(IBaseRepository<User> repository)
     {
         _repository = repository;
     }
 
-    public User[] GetAll()
+    public async Task<User[]> GetAll()
     {
-        return _repository.GetAll();
+        return await _repository.GetAll();
     }
 
     public async Task<User> GetById(int userId)
