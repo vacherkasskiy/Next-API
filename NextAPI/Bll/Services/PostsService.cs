@@ -24,6 +24,11 @@ public class PostsService : IOrientedService<Post>
         throw new NotImplementedException();
     }
 
+    public Task<GetPartitionResponse<Post>> GetPartition(int skip, int limit)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Post> GetById(int id)
     {
         throw new NotImplementedException();

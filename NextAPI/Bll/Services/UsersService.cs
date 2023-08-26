@@ -18,6 +18,15 @@ public class UsersService : IBaseService<User>
         return await _repository.GetAll();
     }
 
+    public async Task<GetPartitionResponse<User>> GetPartition(int skip, int limit)
+    {
+        var users = await _repository.GetAll();
+        return new GetPartitionResponse<User>(users
+            .Skip(skip)
+            .Take(limit)
+            .ToArray(), users.Length);
+    }
+
     public async Task<User> GetById(int userId)
     {
         User? user = await _repository.GetById(userId);

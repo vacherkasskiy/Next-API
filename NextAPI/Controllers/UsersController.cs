@@ -21,14 +21,14 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUsers([FromQuery]GetUsersRequest request)
     {
-        var users = await _service.GetAll();
+        var response = await _service.GetPartition(
+            request.Skip,
+            request.Limit);
+        
         return Ok(new GetUsersResponse
         (
-            users
-                .Skip(request.Skip)
-                .Take(request.Limit)
-                .ToArray(),
-            users.Length
+            response.Entities,
+            response.Length
         ));
     }
     
