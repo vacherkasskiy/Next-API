@@ -6,17 +6,29 @@ namespace NextAPI.Bll.Services;
 
 public class PostsService : IOrientedService<Post>
 {
-    private readonly IBaseRepository<Post> _repository;
+    private readonly IBaseRepository<Post> _postRepository;
+    private readonly IBaseRepository<User> _userRepository;
 
-    public PostsService(IBaseRepository<Post> repository)
+    public PostsService(
+        IBaseRepository<Post> postRepository,
+        IBaseRepository<User> userRepository)
     {
-        _repository = repository;
+        _postRepository = postRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<Post[]> GetForUser(int userId)
     {
-        var posts = await _repository.GetAll();
-        return posts.Where(x => x.ReceiverId == userId).ToArray();
+        var user = await _userRepository.GetById(userId);
+        if (user == null)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+        
+        var posts = await _postRepository.GetAll();
+        return posts
+            .Where(x => x.ReceiverId == userId)
+            .ToArray();
     }
 
     public Task<Post[]> GetAll()
@@ -39,15 +51,16 @@ public class PostsService : IOrientedService<Post>
         throw new NotImplementedException();
     }
 
-    public async Task<Post> Add(Post post)
+    public async Task Add(Post post)
     {
-        var newPost = await _repository.Add(post);
+        var author = await _userRepository.GetById(post.AuthorId);
+        var receiver = await _userRepository.GetById(post.ReceiverId);
 
-        if (newPost.Author == null || newPost.Receiver == null)
+        if (author == null || receiver == null)
         {
             throw new ArgumentOutOfRangeException();
         }
-
-        return newPost;
+        
+        await _postRepository.Add(post);
     }
 }

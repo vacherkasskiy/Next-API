@@ -43,7 +43,7 @@ public class UsersService : IBaseService<User>
         await _repository.Update(user);
     }
 
-    public Task<User> Add(User item)
+    public Task Add(User item)
     {
         throw new NotImplementedException();
     }

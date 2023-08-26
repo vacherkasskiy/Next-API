@@ -8,5 +8,5 @@ public interface IBaseService<T>
     Task<GetPartitionResponse<T>> GetPartition(int skip, int limit);
     Task<T> GetById(int id);
     Task Update(T item);
-    Task<T> Add(T item);
+    Task Add(T item);
 }

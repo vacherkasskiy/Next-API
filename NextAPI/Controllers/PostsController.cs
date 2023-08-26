@@ -20,7 +20,14 @@ public class PostsController : ControllerBase
     [Route("/posts/get_for/{userId}")]
     public async Task<IActionResult> GetUserPosts(int userId)
     {
-        return Ok(await _service.GetForUser(userId));
+        try
+        {
+            return Ok(await _service.GetForUser(userId));
+        }
+        catch
+        {
+            return BadRequest("Wrong user Id");
+        }
     }
 
     [HttpPost]
@@ -29,11 +36,11 @@ public class PostsController : ControllerBase
     {
         try
         {
-            var post = await _service.Add(new Post{
+            await _service.Add(new Post{
                 AuthorId = request.AuthorId,
                 ReceiverId = request.ReceiverId,
                 Text = request.Text});
-            return Ok();
+            return Ok("Post successfully added");
         }
         catch
         {

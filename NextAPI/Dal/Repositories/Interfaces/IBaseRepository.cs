@@ -5,5 +5,5 @@ public interface IBaseRepository<T>
     Task<T[]> GetAll();
     Task<T?> GetById(int id);
     Task Update(T item);
-    Task<T> Add(T item);
+    Task Add(T item);
 }
