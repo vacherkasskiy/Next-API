@@ -17,7 +17,7 @@ public class MessagesController : ControllerBase
     }
     
     [HttpGet]
-    [Route("/messages/{userId}")]
+    [Route("/messages/get_for/{userId}")]
     public async Task<IActionResult> GetUserMessages(int userId)
     {
         try

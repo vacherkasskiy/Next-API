@@ -8,6 +8,12 @@ public class MessagesService : IOrientedService<Message>
 {
     private readonly IBaseRepository<Message> _messageRepository;
     private readonly IBaseRepository<User> _userRepository;
+    
+    /// <summary>
+    /// Заглушка, отображаящая Id пользователя,
+    /// будто бы находящегося в сессии на данный момент времени.
+    /// </summary>
+    private readonly int _currentUserId = 1;
 
     public MessagesService(
         IBaseRepository<Message> messageRepository,
@@ -50,6 +56,12 @@ public class MessagesService : IOrientedService<Message>
         await _messageRepository.Add(message);
     }
 
+    private bool CheckIfIncluded(int userId, Message message)
+    {
+        return (message.ReceiverId == userId && message.AuthorId == _currentUserId) ||
+               (message.ReceiverId == _currentUserId && message.AuthorId == userId);
+    }
+    
     public async Task<Message[]> GetForUser(int userId)
     {
         var user = await _userRepository.GetById(userId);
@@ -60,7 +72,8 @@ public class MessagesService : IOrientedService<Message>
 
         var messages = await _messageRepository.GetAll();
         return messages
-            .Where(x => x.ReceiverId == userId)
+            .OrderBy(x => x.Id)
+            .Where(x => CheckIfIncluded(userId, x))
             .ToArray();
     }
 }
