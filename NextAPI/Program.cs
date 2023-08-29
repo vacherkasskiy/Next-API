@@ -36,8 +36,8 @@ builder.Services.AddScoped<IBaseRepository<Post>, PostsRepository>();
 builder.Services.AddScoped<IBaseRepository<Message>, MessagesRepository>();
 
 builder.Services.AddScoped<IBaseService<User>, UsersService>();
-builder.Services.AddScoped<IOrientedService<Post>, PostsService>();
-builder.Services.AddScoped<IOrientedService<Message>, MessagesService>();
+builder.Services.AddScoped<IPostsService, PostsService>();
+builder.Services.AddScoped<IMessagesService, MessagesService>();
 
 builder.Services.AddFluentValidation(conf =>
 {

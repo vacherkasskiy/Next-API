@@ -9,9 +9,9 @@ namespace NextAPI.Controllers;
 [Route("[controller]")]
 public class MessagesController : ControllerBase
 {
-    private readonly IOrientedService<Message> _service;
+    private readonly IMessagesService _service;
 
-    public MessagesController(IOrientedService<Message> service)
+    public MessagesController(IMessagesService service)
     {
         _service = service;
     }

@@ -4,7 +4,7 @@ using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Bll.Services;
 
-public class PostsService : IOrientedService<Post>
+public class PostsService : IPostsService
 {
     private readonly IBaseRepository<Post> _postRepository;
     private readonly IBaseRepository<User> _userRepository;

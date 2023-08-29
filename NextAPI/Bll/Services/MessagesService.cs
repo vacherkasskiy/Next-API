@@ -4,7 +4,7 @@ using NextAPI.Dal.Repositories.Interfaces;
 
 namespace NextAPI.Bll.Services;
 
-public class MessagesService : IOrientedService<Message>
+public class MessagesService : IMessagesService
 {
     private readonly IBaseRepository<Message> _messageRepository;
     private readonly IBaseRepository<User> _userRepository;

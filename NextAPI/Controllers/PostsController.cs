@@ -9,9 +9,9 @@ namespace NextAPI.Controllers;
 [Route("[controller]")]
 public class PostsController : ControllerBase
 {
-    private readonly IOrientedService<Post> _service;
+    private readonly IPostsService _service;
 
-    public PostsController(IOrientedService<Post> service)
+    public PostsController(IPostsService service)
     {
         _service = service;
     }
