@@ -21,19 +21,26 @@ public class PostsRepository : IBaseRepository<Post>
             .ToArrayAsync();
     }
 
-    public Task<Post?> GetById(int id)
+    public async Task<Post?> GetById(int postId)
     {
-        throw new NotImplementedException();
+        return await _db.Posts.FindAsync(postId);
     }
 
-    public Task Update(Post item)
+    public async Task Update(Post post)
     {
-        throw new NotImplementedException();
+        _db.Posts.Update(post);
+        await _db.SaveChangesAsync();
     }
 
     public async Task Add(Post post)
     {
         await _db.Posts.AddAsync(post);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task Delete(Post post)
+    {
+        _db.Posts.Remove(post);
         await _db.SaveChangesAsync();
     }
 }

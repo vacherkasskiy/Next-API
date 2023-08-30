@@ -31,8 +31,15 @@ public class UsersRepository : IBaseRepository<User>
         await _db.SaveChangesAsync();
     }
 
-    public Task Add(User item)
+    public async Task Add(User user)
     {
-        throw new NotImplementedException();
+        await _db.Users.AddAsync(user);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task Delete(User user)
+    {
+        _db.Users.Remove(user);
+        await _db.SaveChangesAsync();
     }
 }

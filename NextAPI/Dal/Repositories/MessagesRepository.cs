@@ -38,4 +38,10 @@ public class MessagesRepository : IBaseRepository<Message>
         await _db.Messages.AddAsync(message);
         await _db.SaveChangesAsync();
     }
+    
+    public async Task Delete(Message message)
+    {
+        _db.Remove(message);
+        await _db.SaveChangesAsync();
+    }
 }
