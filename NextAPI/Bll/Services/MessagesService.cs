@@ -28,19 +28,29 @@ public class MessagesService : IMessagesService
         return await _messageRepository.GetAll();
     }
 
-    public Task<GetPartitionResponse<Message>> GetPartition(int skip, int limit)
+    public async Task<GetPartitionResponse<Message>> GetPartition(int skip, int limit)
     {
-        throw new NotImplementedException();
+        var messages = await _messageRepository.GetAll();
+        return new GetPartitionResponse<Message>(messages
+                .Skip(skip)
+                .Take(limit)
+                .ToArray(), messages.Length);
     }
 
-    public Task<Message> GetById(int id)
+    public async Task<Message> GetById(int messageId)
     {
-        throw new NotImplementedException();
+        var message = await _messageRepository.GetById(messageId);
+        if (message == null)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        return message;
     }
 
-    public Task Update(Message item)
+    public async Task Update(Message message)
     {
-        throw new NotImplementedException();
+        await _messageRepository.Update(message);
     }
 
     public async Task Add(Message message)
@@ -54,6 +64,17 @@ public class MessagesService : IMessagesService
         }
 
         await _messageRepository.Add(message);
+    }
+
+    public async Task DeleteById(int messageId)
+    {
+        var message = await _messageRepository.GetById(messageId);
+        if (message == null)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        await _messageRepository.Delete(message);
     }
 
     private bool CheckIfIncluded(int userId, Message message)

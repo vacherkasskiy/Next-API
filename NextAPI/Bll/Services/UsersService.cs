@@ -43,8 +43,19 @@ public class UsersService : IBaseService<User>
         await _repository.Update(user);
     }
 
-    public Task Add(User item)
+    public async Task Add(User user)
     {
-        throw new NotImplementedException();
+        await _repository.Add(user);
+    }
+
+    public async Task DeleteById(int userId)
+    {
+        var user = await _repository.GetById(userId);
+        if (user == null)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        await _repository.Delete(user);
     }
 }

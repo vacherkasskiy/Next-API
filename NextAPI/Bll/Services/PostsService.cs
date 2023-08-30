@@ -31,24 +31,34 @@ public class PostsService : IPostsService
             .ToArray();
     }
 
-    public Task<Post[]> GetAll()
+    public async Task<Post[]> GetAll()
     {
-        throw new NotImplementedException();
+        return await _postRepository.GetAll();
     }
 
-    public Task<GetPartitionResponse<Post>> GetPartition(int skip, int limit)
+    public async Task<GetPartitionResponse<Post>> GetPartition(int skip, int limit)
     {
-        throw new NotImplementedException();
+        var posts = await _postRepository.GetAll();
+        return new GetPartitionResponse<Post>(posts
+            .Skip(skip)
+            .Take(limit)
+            .ToArray(), posts.Length);
     }
 
-    public Task<Post> GetById(int id)
+    public async Task<Post> GetById(int postId)
     {
-        throw new NotImplementedException();
+        var post = await _postRepository.GetById(postId);
+        if (post == null)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        return post;
     }
 
-    public Task Update(Post item)
+    public async Task Update(Post post)
     {
-        throw new NotImplementedException();
+        await _postRepository.Update(post);
     }
 
     public async Task Add(Post post)
@@ -62,5 +72,16 @@ public class PostsService : IPostsService
         }
         
         await _postRepository.Add(post);
+    }
+
+    public async Task DeleteById(int postId)
+    {
+        var post = await _postRepository.GetById(postId);
+        if (post == null)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        await _postRepository.Delete(post);
     }
 }

@@ -9,4 +9,5 @@ public interface IBaseService<T>
     Task<T> GetById(int id);
     Task Update(T item);
     Task Add(T item);
+    Task DeleteById(int id);
 }
