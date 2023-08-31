@@ -29,7 +29,7 @@ public class UsersService : IBaseService<User>
 
     public async Task<User> GetById(int userId)
     {
-        User? user = await _repository.GetById(userId);
+        var user = await _repository.GetById(userId);
         if (user == null)
         {
             throw new ArgumentOutOfRangeException();
