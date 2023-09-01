@@ -52,7 +52,7 @@ public class UsersServiceTests
     }
 
     [Fact]
-    public async Task GetAll_WithSingleUser_ShouldSuccessAsync()
+    public async Task GetAll_ShouldSuccessAsync()
     {
         // Arrange
         var expectedUsers = UserFaker
