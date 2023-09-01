@@ -13,4 +13,16 @@ public class User
     public string? Website { get; set; }
     public string? City { get; set; }
     public string? Status { get; set; }
+
+    public User(User src)
+    {
+        Id = src.Id;
+        Image = src.Image;
+        Name = src.Name;
+        Username = src.Username;
+        Email = src.Email;
+        Website = src.Website;
+        City = src.City;
+        Status = src.Status;
+    }
 }
