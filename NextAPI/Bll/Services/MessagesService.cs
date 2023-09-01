@@ -22,12 +22,12 @@ public class MessagesService : IMessagesService
         _messageRepository = messageRepository;
         _userRepository = userRepository;
     }
-
+    
     public async Task<Message[]> GetAll()
     {
         return await _messageRepository.GetAll();
     }
-
+    
     public async Task<GetPartitionResponse<Message>> GetPartition(int skip, int limit)
     {
         var messages = await _messageRepository.GetAll();
@@ -36,7 +36,7 @@ public class MessagesService : IMessagesService
                 .Take(limit)
                 .ToArray(), messages.Length);
     }
-
+    
     public async Task<Message> GetById(int messageId)
     {
         var message = await _messageRepository.GetById(messageId);
@@ -47,12 +47,12 @@ public class MessagesService : IMessagesService
 
         return message;
     }
-
+    
     public async Task Update(Message message)
     {
         await _messageRepository.Update(message);
     }
-
+    
     public async Task Add(Message message)
     {
         var author = await _userRepository.GetById(message.AuthorId);
@@ -65,7 +65,7 @@ public class MessagesService : IMessagesService
 
         await _messageRepository.Add(message);
     }
-
+    
     public async Task DeleteById(int messageId)
     {
         var message = await _messageRepository.GetById(messageId);
@@ -93,7 +93,6 @@ public class MessagesService : IMessagesService
 
         var messages = await _messageRepository.GetAll();
         return messages
-            .OrderBy(x => x.Id)
             .Where(x => CheckIfIncluded(userId, x))
             .ToArray();
     }

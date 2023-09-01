@@ -65,7 +65,7 @@ public static class MessageFaker
     
     public static Message WithAuthor(
         this Message src,
-        User author)
+        User? author)
     {
         src.Author = author;
         return src;
@@ -73,7 +73,7 @@ public static class MessageFaker
     
     public static Message WithReceiver(
         this Message src,
-        User receiver)
+        User? receiver)
     {
         src.Receiver = receiver;
         return src;
