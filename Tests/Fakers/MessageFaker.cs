@@ -13,7 +13,7 @@ public static class MessageFaker
         .RuleFor(x => x.ReceiverId, f => f.Random.Int(1, 1000))
         .RuleFor(x => x.AuthorId, f => f.Random.Int(1, 1000))
         .RuleFor(x => x.Text, f => f.Lorem.Sentence())
-        .FinishWith((f, message) =>
+        .FinishWith((_, message) =>
         {
             message.Receiver = UserFaker.Generate()
                 .Single()
@@ -67,7 +67,7 @@ public static class MessageFaker
         this Message src,
         User author)
     {
-        src.Author = new User(author);
+        src.Author = author;
         return src;
     }
     
@@ -75,7 +75,7 @@ public static class MessageFaker
         this Message src,
         User receiver)
     {
-        src.Receiver = new User(receiver);
+        src.Receiver = receiver;
         return src;
     }
 }

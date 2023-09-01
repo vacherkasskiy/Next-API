@@ -67,7 +67,7 @@ public static class PostFaker
         this Post src,
         User author)
     {
-        src.Author = new User(author);
+        //src.Author = new User(author);
         return src;
     }
     
@@ -75,7 +75,7 @@ public static class PostFaker
         this Post src,
         User receiver)
     {
-        src.Receiver = new User(receiver);
+        //src.Receiver = new User(receiver);
         return src;
     }
 }
