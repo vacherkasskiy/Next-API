@@ -293,7 +293,8 @@ public class MessageServiceTests
             .WithId(validId);
         var messages = MessageFaker
             .Generate(10)
-            .Select(x => x.WithId(x.Id % 3 + 1))
+            .Select(x => x.WithAuthorId(x.AuthorId % 3 + 1))
+            .Select(x => x.WithReceiverId(x.ReceiverId % 3 + 1))
             .ToArray();
         var expected = messages
             .Where(x =>
