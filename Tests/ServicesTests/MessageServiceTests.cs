@@ -282,15 +282,19 @@ public class MessageServiceTests
     }
 
     [Fact]
-    public async Task GetForUser_WithValidId_ShouldSuccessAsync()
+    public async Task GetAllForUsersPair_WithValidIds_ShouldSuccessAsync()
     {
         // Arrange
-        const int currentUserId = 1;
-        const int validId = 2;
-        var user = UserFaker
+        const int firstValidId = 1;
+        const int secondValidId = 2;
+        var firstUser = UserFaker
             .Generate()
             .Single()
-            .WithId(validId);
+            .WithId(firstValidId);
+        var secondUser = UserFaker
+            .Generate()
+            .Single()
+            .WithId(secondValidId);
         var messages = MessageFaker
             .Generate(10)
             .Select(x => x.WithAuthorId(x.AuthorId % 3 + 1))
@@ -298,8 +302,8 @@ public class MessageServiceTests
             .ToArray();
         var expected = messages
             .Where(x =>
-                (x.AuthorId == currentUserId && x.ReceiverId == validId) ||
-                (x.AuthorId == validId && x.ReceiverId == currentUserId))
+                (x.AuthorId == firstValidId && x.ReceiverId == secondValidId) ||
+                (x.AuthorId == secondValidId && x.ReceiverId == firstValidId))
             .ToArray();
         var mockUserRepository = new Mock<IBaseRepository<User>>();
         var mockMessageRepository = new Mock<IBaseRepository<Message>>();
@@ -307,14 +311,17 @@ public class MessageServiceTests
             .Setup(x => x.GetAll())
             .ReturnsAsync(messages);
         mockUserRepository
-            .Setup(x => x.GetById(validId))
-            .ReturnsAsync(user);
+            .Setup(x => x.GetById(firstValidId))
+            .ReturnsAsync(firstUser);
+        mockUserRepository
+            .Setup(x => x.GetById(secondValidId))
+            .ReturnsAsync(secondUser);
         var service = new MessagesService(
             mockMessageRepository.Object,
             mockUserRepository.Object);
 
         // Act
-        var result = await service.GetForUser(validId);
+        var result = await service.GetAllForUsersPair(firstValidId, secondValidId);
 
         // Assert
         result.Should().NotBeNull();
@@ -324,28 +331,36 @@ public class MessageServiceTests
             .BeEquivalentTo(expected, options => options
                 .Using(new MessageComparer())
                 .WithStrictOrdering());
-        mockUserRepository.Verify(x => x.GetById(validId), Times.Once);
+        mockUserRepository.Verify(x => x.GetById(firstValidId), Times.Once);
+        mockUserRepository.Verify(x => x.GetById(secondValidId), Times.Once);
+        mockUserRepository.Verify(x => x.GetById(It.IsAny<int>()), Times.Exactly(2));
         mockMessageRepository.Verify(x => x.GetAll(), Times.Once);
     }
 
     [Fact]
-    public async Task GetForUser_WithInvalidId_ShouldSuccessAsync()
+    public async Task GetAllForUsersPair_WithInvalidIds_ShouldSuccessAsync()
     {
         // Arrange
-        const int currentUserId = 1;
-        const int invalidId = -1;
+        const int firstInvalidId = -1;
+        const int secondInvalidId = -2;
         var mockUserRepository = new Mock<IBaseRepository<User>>();
         var mockMessageRepository = new Mock<IBaseRepository<Message>>();
         mockUserRepository
-            .Setup(x => x.GetById(invalidId))
+            .Setup(x => x.GetById(firstInvalidId))
+            .ReturnsAsync((User?) null);
+        mockUserRepository
+            .Setup(x => x.GetById(secondInvalidId))
             .ReturnsAsync((User?) null);
         var service = new MessagesService(
             mockMessageRepository.Object,
             mockUserRepository.Object);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetForUser(invalidId));
-        mockUserRepository.Verify(x => x.GetById(invalidId), Times.Once);
+        await Assert
+            .ThrowsAsync<ArgumentOutOfRangeException>(async () => await service
+                .GetAllForUsersPair(firstInvalidId, secondInvalidId));
+        mockUserRepository.Verify(x => x.GetById(firstInvalidId), Times.Once);
+        mockUserRepository.Verify(x => x.GetById(secondInvalidId), Times.Once);
         mockMessageRepository.Verify(x => x.GetAll(), Times.Never);
     }
 }

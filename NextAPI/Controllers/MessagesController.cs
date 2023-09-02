@@ -9,6 +9,12 @@ namespace NextAPI.Controllers;
 [Route("[controller]")]
 public class MessagesController : ControllerBase
 {
+    /// <summary>
+    /// Заглушка, отображаящая Id пользователя,
+    /// будто бы находящегося в сессии на данный момент времени.
+    /// </summary>
+    private readonly int _currentUserId = 1;
+    
     private readonly IMessagesService _service;
 
     public MessagesController(IMessagesService service)
@@ -22,13 +28,33 @@ public class MessagesController : ControllerBase
     {
         try
         {
-            return Ok(await _service.GetForUser(userId));
+            return Ok(await _service.GetAllForUsersPair(_currentUserId, userId));
         }
         catch
         {
             return BadRequest("Wrong user Id");
         }
     }
+
+    [HttpGet]
+    [Route("/messages/get_latest/{userId}")]
+    public async Task<IActionResult> GetLatestMessage(int userId)
+    {
+        try
+        {
+            var latest = await _service.GetLatestForUsersPair(_currentUserId, userId);
+            return Ok(latest);
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            return BadRequest("Wrong user Id");
+        }
+        catch (InvalidOperationException e)
+        {
+            return Ok("");
+        }
+    }
+    
 
     [HttpPost]
     [Route("/messages/add")]

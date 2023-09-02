@@ -8,12 +8,6 @@ public class MessagesService : IMessagesService
 {
     private readonly IBaseRepository<Message> _messageRepository;
     private readonly IBaseRepository<User> _userRepository;
-    
-    /// <summary>
-    /// Заглушка, отображаящая Id пользователя,
-    /// будто бы находящегося в сессии на данный момент времени.
-    /// </summary>
-    private readonly int _currentUserId = 1;
 
     public MessagesService(
         IBaseRepository<Message> messageRepository,
@@ -77,23 +71,30 @@ public class MessagesService : IMessagesService
         await _messageRepository.Delete(message);
     }
 
-    private bool CheckIfIncluded(int userId, Message message)
+    private bool CheckIfIncluded(int firstId, int secondId, Message message)
     {
-        return (message.ReceiverId == userId && message.AuthorId == _currentUserId) ||
-               (message.ReceiverId == _currentUserId && message.AuthorId == userId);
+        return (message.ReceiverId == firstId && message.AuthorId == secondId) ||
+               (message.ReceiverId == secondId && message.AuthorId == firstId);
     }
     
-    public async Task<Message[]> GetForUser(int userId)
+    public async Task<Message[]> GetAllForUsersPair(int firstId, int secondId)
     {
-        var user = await _userRepository.GetById(userId);
-        if (user == null)
+        var first = await _userRepository.GetById(firstId);
+        var second = await _userRepository.GetById(secondId);
+        if (first == null || second == null)
         {
             throw new ArgumentOutOfRangeException();
         }
 
         var messages = await _messageRepository.GetAll();
         return messages
-            .Where(x => CheckIfIncluded(userId, x))
+            .Where(x => CheckIfIncluded(firstId, secondId, x))
             .ToArray();
+    }
+
+    public async Task<Message> GetLatestForUsersPair(int firstId, int secondId)
+    {
+        var messages = await GetAllForUsersPair(firstId, secondId);
+        return messages.Last();
     }
 }
