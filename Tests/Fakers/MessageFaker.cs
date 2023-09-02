@@ -27,7 +27,12 @@ public static class MessageFaker
     {
         lock (Lock)
         {
-            return Enumerable.Repeat(Faker.Generate(), count);
+            var messages = new System.Collections.Generic.List<Message>();
+            for (int i = 0; i < count; i++)
+            {
+                messages.Add(Faker.Generate());
+            }
+            return messages;
         }
     }
 

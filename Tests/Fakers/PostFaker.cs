@@ -27,7 +27,12 @@ public static class PostFaker
     {
         lock (Lock)
         {
-            return Enumerable.Repeat(Faker.Generate(), count);
+            var posts = new List<Post>();
+            for (int i = 0; i < count; i++)
+            {
+                posts.Add(Faker.Generate());
+            }
+            return posts;
         }
     }
 
@@ -65,17 +70,17 @@ public static class PostFaker
     
     public static Post WithAuthor(
         this Post src,
-        User author)
+        User? author)
     {
-        //src.Author = new User(author);
+        src.Author = author;
         return src;
     }
     
     public static Post WithReceiver(
         this Post src,
-        User receiver)
+        User? receiver)
     {
-        //src.Receiver = new User(receiver);
+        src.Receiver = receiver;
         return src;
     }
 }

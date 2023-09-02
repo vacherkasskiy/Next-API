@@ -22,7 +22,12 @@ public static class UserFaker
     {
         lock (Lock)
         {
-            return Enumerable.Repeat(Faker.Generate(), count);
+            var users = new List<User>();
+            for (int i = 0; i < count; i++)
+            {
+                users.Add(Faker.Generate());
+            }
+            return users;
         }
     }
     
@@ -30,8 +35,6 @@ public static class UserFaker
         this User src,
         int userId)
     {
-        // Would be using `with`
-        // syntax in case of `record`
         src.Id = userId;
         return src;
     }
