@@ -14,8 +14,10 @@ public class Message
     [ForeignKey("Receiver")]
     public int ReceiverId { get; set; }
 
-    public string Text { get; set; }
+    public string Text { get; set; } = "";
 
     public User? Author { get; set; }
     public User? Receiver { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
