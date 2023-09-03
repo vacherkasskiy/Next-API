@@ -37,7 +37,7 @@ public class MessagesController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/messages/get_latest/{userId}")]
+    [Route("/messages/get_latest_for/{userId}")]
     public async Task<IActionResult> GetLatestMessage(int userId)
     {
         try
