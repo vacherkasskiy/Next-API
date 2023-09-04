@@ -52,6 +52,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.Cookie.HttpOnly = true;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.Cookie.SameSite = SameSiteMode.None;
         options.LoginPath = "/auth/login";
     });
 

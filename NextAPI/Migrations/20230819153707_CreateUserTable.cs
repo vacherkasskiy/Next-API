@@ -25,6 +25,7 @@ namespace NextAPI.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
+            migrationBuilder.RestartSequence("Users_Id_seq", 20, "public");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

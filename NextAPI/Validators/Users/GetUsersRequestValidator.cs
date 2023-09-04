@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using NextAPI.Requests.Users;
 
-namespace NextAPI.Validators.UsersEndpoints;
+namespace NextAPI.Validators.Users;
 
 public class GetUsersRequestValidator : AbstractValidator<GetUsersRequest>
 {
