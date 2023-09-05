@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
@@ -15,26 +16,8 @@ public class AuthService : IAuthService
         _repository = repository;
     }
 
-    public async Task Register(User user)
+    private static ClaimsPrincipal GetClaims(User user)
     {
-        var sameEmailUsers = (await _repository
-                .GetAll())
-            .Where(x => x.Email == user.Email)
-            .ToArray();
-
-        if (sameEmailUsers.Length > 0)
-        {
-            throw new ArgumentOutOfRangeException();
-        }
-
-        await _repository.Add(user);
-    }
-
-    public async Task<ClaimsPrincipal> Login(string email, string password)
-    {
-        var user = (await _repository
-            .GetAll()).Single(x => x.Email == email);
-
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -46,6 +29,40 @@ public class AuthService : IAuthService
         var principal = new ClaimsPrincipal(identity);
 
         return principal;
+    }
+    
+    public async Task<ClaimsPrincipal> Register(User user)
+    {
+        var sameEmailUsers = (await _repository.GetAll())
+            .Where(x => x.Email == user.Email)
+            .ToArray();
+
+        if (sameEmailUsers.Length > 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(user), "User with such email already exists");
+        }
+        
+        var passwordHasher = new PasswordHasher<User>();
+         user.Password = passwordHasher.HashPassword(user, user.Password);
+        await _repository.Add(user);
+        return GetClaims(user);
+    }
+
+    public async Task<ClaimsPrincipal> Login(string email, string password)
+    {
+        var user = (await _repository
+            .GetAll()).Single(x => x.Email == email);
+
+        var passwordHasher = new PasswordHasher<User>();
+        var result = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+
+        if (result == PasswordVerificationResult.Failed)
+        {
+            throw new ArgumentOutOfRangeException(nameof(user), "Wrong password");
+        }
+        
+        return GetClaims(user);
     }
 
     public Task Logout(User user)

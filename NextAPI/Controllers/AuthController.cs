@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
@@ -26,18 +25,23 @@ public class AuthController : ControllerBase
     {
         try
         {
-            await _service.Register(new User
+            var principal = await _service.Register(new User
             {
                 Name = request.Name,
                 Username = request.Username,
-                Email = request.Email
+                Email = request.Email,
+                Password = request.Password
             });
-
-            return Ok();
+            
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal);
+            
+            return Ok("Authorization went successfully");
         }
-        catch
+        catch (ArgumentOutOfRangeException e)
         {
-            return BadRequest();
+            return BadRequest(e.Message);
         }
     }
 
@@ -45,11 +49,22 @@ public class AuthController : ControllerBase
     [Route("/auth/login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        var principal = await _service.Login(request.Email, request.Password);
-        await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            principal);
-        return Ok();
+        try
+        {
+            var principal = await _service.Login(request.Email, request.Password);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal);
+            return Ok();
+        }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest("Wrong email");
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpGet]
@@ -60,9 +75,6 @@ public class AuthController : ControllerBase
         {
             return Ok(User.FindFirstValue(ClaimTypes.Email));
         }
-        else
-        {
-            return BadRequest();
-        }
+        return BadRequest();
     }
 }
