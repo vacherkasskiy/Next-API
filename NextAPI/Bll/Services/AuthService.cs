@@ -21,8 +21,6 @@ public class AuthService : IAuthService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.Email, user.Email)
         };
         
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -44,7 +42,7 @@ public class AuthService : IAuthService
         }
         
         var passwordHasher = new PasswordHasher<User>();
-         user.Password = passwordHasher.HashPassword(user, user.Password);
+        user.Password = passwordHasher.HashPassword(user, user.Password);
         await _repository.Add(user);
         return GetClaims(user);
     }
@@ -63,10 +61,5 @@ public class AuthService : IAuthService
         }
         
         return GetClaims(user);
-    }
-
-    public Task Logout(User user)
-    {
-        throw new NotImplementedException();
     }
 }

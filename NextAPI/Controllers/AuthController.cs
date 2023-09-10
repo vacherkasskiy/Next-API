@@ -12,11 +12,28 @@ namespace NextAPI.Controllers;
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _service;
+    private readonly IAuthService _authService;
+    private readonly IBaseService<User> _userService;
 
-    public AuthController(IAuthService service)
+    public AuthController(
+        IAuthService authService,
+        IBaseService<User> userService)
     {
-        _service = service;
+        _authService = authService;
+        _userService = userService;
+    }
+    
+    [HttpGet]
+    [Route("/auth/get_current")]
+    public async Task<IActionResult> GetCurrent()
+    {
+        if (User.Identity!.IsAuthenticated)
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var user = await _userService.GetById(int.Parse(id));
+            return Ok(user);
+        }
+        return BadRequest();
     }
     
     [HttpPost]
@@ -25,7 +42,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var principal = await _service.Register(new User
+            var principal = await _authService.Register(new User
             {
                 Name = request.Name,
                 Username = request.Username,
@@ -36,8 +53,8 @@ public class AuthController : ControllerBase
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal);
-            
-            return Ok("Authorization went successfully");
+
+            return Ok("Registered");
         }
         catch (ArgumentOutOfRangeException e)
         {
@@ -51,11 +68,12 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var principal = await _service.Login(request.Email, request.Password);
+            var principal = await _authService.Login(request.Email, request.Password);
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal);
-            return Ok();
+            
+            return Ok("Authorized");
         }
         catch (InvalidOperationException e)
         {
@@ -63,18 +81,14 @@ public class AuthController : ControllerBase
         }
         catch (ArgumentOutOfRangeException e)
         {
-            return BadRequest(e.Message);
+            return BadRequest("Wrong password");
         }
     }
 
-    [HttpGet]
-    [Route("/auth/get_current")]
-    public IActionResult GetCurrent()
+    [Route("/auth/logout")]
+    [HttpDelete]
+    public async Task Logout()
     {
-        if (User.Identity!.IsAuthenticated)
-        {
-            return Ok(User.FindFirstValue(ClaimTypes.Email));
-        }
-        return BadRequest();
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
 }

@@ -7,5 +7,4 @@ public interface IAuthService
 {
     Task<ClaimsPrincipal> Register(User user);
     Task<ClaimsPrincipal> Login(string email, string password);
-    Task Logout(User user);
 }
