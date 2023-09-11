@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
+using NextAPI.Exceptions.User;
 using NextAPI.Requests.Users;
 using NextAPI.Responses.Users;
 
@@ -40,9 +41,9 @@ public class UsersController : ControllerBase
         {
             return Ok(await _service.GetById(userId));
         }
-        catch
+        catch (UserNotFoundByIdException e)
         {
-            return BadRequest("Wrong user id");
+            return BadRequest(e.Message);
         }
     }
 
@@ -57,9 +58,9 @@ public class UsersController : ControllerBase
             await _service.Update(user);
             return Ok();
         }
-        catch
+        catch (UserNotFoundByIdException e)
         {
-            return BadRequest("Wrong user id");
+            return BadRequest(e.Message);
         }
     }
 }

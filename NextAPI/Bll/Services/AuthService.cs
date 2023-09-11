@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions.Auth;
 
 namespace NextAPI.Bll.Services;
 
@@ -37,8 +38,7 @@ public class AuthService : IAuthService
 
         if (sameEmailUsers.Length > 0)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(user), "User with such email already exists");
+            throw new UserAlreadyExistsException();
         }
         
         var passwordHasher = new PasswordHasher<User>();
@@ -49,15 +49,24 @@ public class AuthService : IAuthService
 
     public async Task<ClaimsPrincipal> Login(string email, string password)
     {
-        var user = (await _repository
-            .GetAll()).Single(x => x.Email == email);
+        var users = (await _repository
+            .GetAll())
+            .Where(x => x.Email == email)
+            .ToArray();
+
+        if (users.Length != 1)
+        {
+            throw new WrongEmailException();
+        }
+
+        var user = users.Single();
 
         var passwordHasher = new PasswordHasher<User>();
         var result = passwordHasher.VerifyHashedPassword(user, user.Password, password);
 
         if (result == PasswordVerificationResult.Failed)
         {
-            throw new ArgumentOutOfRangeException(nameof(user), "Wrong password");
+            throw new WrongPasswordException();
         }
         
         return GetClaims(user);

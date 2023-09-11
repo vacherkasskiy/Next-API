@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
+using NextAPI.Exceptions.Post;
 using NextAPI.Requests.Posts;
 
 namespace NextAPI.Controllers;
@@ -24,9 +25,9 @@ public class PostsController : ControllerBase
         {
             return Ok(await _service.GetForUser(userId));
         }
-        catch
+        catch (PostWithWrongReceiverIdException e)
         {
-            return BadRequest("Wrong user Id");
+            return BadRequest(e.Message);
         }
     }
 
@@ -42,9 +43,9 @@ public class PostsController : ControllerBase
                 Text = request.Text});
             return Ok("Post successfully added");
         }
-        catch
+        catch (PostAuthorOrReceiverNotFoundException e)
         {
-            return BadRequest("Wrong author or/and receiver Id");
+            return BadRequest(e.Message);
         }
     }
 }

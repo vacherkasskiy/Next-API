@@ -1,6 +1,7 @@
 ﻿using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions.Message;
 
 namespace NextAPI.Bll.Services;
 
@@ -36,7 +37,7 @@ public class MessagesService : IMessagesService
         var message = await _messageRepository.GetById(messageId);
         if (message == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new MessageNotFoundByIdException();
         }
 
         return message;
@@ -54,7 +55,7 @@ public class MessagesService : IMessagesService
         
         if (author == null || receiver == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new MessageAuthorOrReceiverNotFoundException();
         }
 
         await _messageRepository.Add(message);
@@ -65,7 +66,7 @@ public class MessagesService : IMessagesService
         var message = await _messageRepository.GetById(messageId);
         if (message == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new MessageNotFoundByIdException();
         }
 
         await _messageRepository.Delete(message);
@@ -83,7 +84,7 @@ public class MessagesService : IMessagesService
         var second = await _userRepository.GetById(secondId);
         if (first == null || second == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new MessageAuthorOrReceiverNotFoundException();
         }
 
         var messages = await _messageRepository.GetAll();

@@ -1,6 +1,7 @@
 ﻿using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions.Post;
 
 namespace NextAPI.Bll.Services;
 
@@ -22,7 +23,7 @@ public class PostsService : IPostsService
         var user = await _userRepository.GetById(userId);
         if (user == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new PostWithWrongReceiverIdException();
         }
         
         var posts = await _postRepository.GetAll();
@@ -50,7 +51,7 @@ public class PostsService : IPostsService
         var post = await _postRepository.GetById(postId);
         if (post == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new PostWrongIdException();
         }
 
         return post;
@@ -68,7 +69,7 @@ public class PostsService : IPostsService
 
         if (author == null || receiver == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new PostAuthorOrReceiverNotFoundException();
         }
         
         await _postRepository.Add(post);
@@ -79,7 +80,7 @@ public class PostsService : IPostsService
         var post = await _postRepository.GetById(postId);
         if (post == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new PostWrongIdException();
         }
 
         await _postRepository.Delete(post);

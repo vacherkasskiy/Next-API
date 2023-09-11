@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
+using NextAPI.Exceptions.Message;
 using NextAPI.Requests.Messages;
 
 namespace NextAPI.Controllers;
@@ -9,12 +11,6 @@ namespace NextAPI.Controllers;
 [Route("[controller]")]
 public class MessagesController : ControllerBase
 {
-    /// <summary>
-    /// Заглушка, отображаящая Id пользователя,
-    /// будто бы находящегося в сессии на данный момент времени.
-    /// </summary>
-    private readonly int _currentUserId = 1;
-    
     private readonly IMessagesService _service;
 
     public MessagesController(IMessagesService service)
@@ -28,11 +24,14 @@ public class MessagesController : ControllerBase
     {
         try
         {
-            return Ok(await _service.GetAllForUsersPair(_currentUserId, userId));
+            var currentUserId = int.Parse(
+                User
+                .FindFirstValue(ClaimTypes.NameIdentifier));
+            return Ok(await _service.GetAllForUsersPair(currentUserId, userId));
         }
-        catch
+        catch (MessageAuthorOrReceiverNotFoundException e)
         {
-            return BadRequest("Wrong user Id");
+            return BadRequest(e.Message);
         }
     }
 
@@ -42,12 +41,15 @@ public class MessagesController : ControllerBase
     {
         try
         {
-            var latest = await _service.GetLatestForUsersPair(_currentUserId, userId);
+            var currentUserId = int.Parse(
+                User
+                .FindFirstValue(ClaimTypes.NameIdentifier));
+            var latest = await _service.GetLatestForUsersPair(currentUserId, userId);
             return Ok(latest);
         }
-        catch (ArgumentOutOfRangeException e)
+        catch (MessageAuthorOrReceiverNotFoundException e)
         {
-            return BadRequest("Wrong user Id");
+            return BadRequest(e.Message);
         }
         catch (InvalidOperationException e)
         {
@@ -70,9 +72,9 @@ public class MessagesController : ControllerBase
             });
             return Ok("Message successfully sent");
         }
-        catch
+        catch (MessageAuthorOrReceiverNotFoundException e)
         {
-            return BadRequest("Wrong author or/and receiver Id");
+            return BadRequest(e.Message);
         }
     }
 }

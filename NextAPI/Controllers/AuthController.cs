@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
+using NextAPI.Exceptions.Auth;
 using NextAPI.Requests.Auth;
 
 namespace NextAPI.Controllers;
@@ -25,19 +27,24 @@ public class AuthController : ControllerBase
     
     [HttpGet]
     [Route("/auth/get_current")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> GetCurrent()
     {
-        if (User.Identity!.IsAuthenticated)
+        if (!User.Identity!.IsAuthenticated)
         {
-            var id = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var user = await _userService.GetById(int.Parse(id));
-            return Ok(user);
+            return BadRequest();
         }
-        return BadRequest();
+        
+        var id = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var user = await _userService.GetById(int.Parse(id));
+        return Ok(user);
     }
     
     [HttpPost]
     [Route("/auth/register")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
         try
@@ -56,7 +63,7 @@ public class AuthController : ControllerBase
 
             return Ok("Registered");
         }
-        catch (ArgumentOutOfRangeException e)
+        catch (UserAlreadyExistsException e)
         {
             return BadRequest(e.Message);
         }
@@ -64,6 +71,9 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Route("/auth/login")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(403)]
     public async Task<IActionResult> Login(LoginRequest request)
     {
         try
@@ -75,18 +85,21 @@ public class AuthController : ControllerBase
             
             return Ok("Authorized");
         }
-        catch (InvalidOperationException e)
+        catch (WrongEmailException e)
         {
-            return BadRequest("Wrong email");
+            return BadRequest(e.Message);
         }
-        catch (ArgumentOutOfRangeException e)
+        catch (WrongPasswordException e)
         {
-            return BadRequest("Wrong password");
+            return StatusCode(StatusCodes.Status403Forbidden, e.Message);
         }
     }
 
+    [Authorize]
     [Route("/auth/logout")]
     [HttpDelete]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(405)]
     public async Task Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
