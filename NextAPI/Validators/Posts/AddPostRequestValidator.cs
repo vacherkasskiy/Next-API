@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using NextAPI.Requests.Posts;
 
-namespace NextAPI.Validators.PostsEndpoints;
+namespace NextAPI.Validators.Posts;
 
 public class AddPostRequestValidator : AbstractValidator<AddPostRequest>
 {

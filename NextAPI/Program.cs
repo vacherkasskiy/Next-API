@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NextAPI.Bll.Services;
 using NextAPI.Bll.Services.Interfaces;
@@ -34,6 +35,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IBaseRepository<User>, UsersRepository>();
 builder.Services.AddScoped<IBaseRepository<Post>, PostsRepository>();
 builder.Services.AddScoped<IBaseRepository<Message>, MessagesRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IBaseService<User>, UsersService>();
 builder.Services.AddScoped<IPostsService, PostsService>();
@@ -44,6 +46,17 @@ builder.Services.AddFluentValidation(conf =>
     conf.RegisterValidatorsFromAssembly(typeof(Program).Assembly);
     conf.AutomaticValidationEnabled = true;
 });
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.LoginPath = "/auth/login";
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -57,9 +70,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

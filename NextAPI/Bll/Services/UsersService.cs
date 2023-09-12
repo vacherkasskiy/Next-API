@@ -1,6 +1,7 @@
 ﻿using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions.User;
 
 namespace NextAPI.Bll.Services;
 
@@ -32,7 +33,7 @@ public class UsersService : IBaseService<User>
         var user = await _repository.GetById(userId);
         if (user == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new UserNotFoundByIdException();
         }
 
         return user;
@@ -53,7 +54,7 @@ public class UsersService : IBaseService<User>
         var user = await _repository.GetById(userId);
         if (user == null)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new UserNotFoundByIdException();
         }
 
         await _repository.Delete(user);
