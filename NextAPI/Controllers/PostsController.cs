@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Exceptions.Post;
@@ -8,6 +9,7 @@ namespace NextAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class PostsController : ControllerBase
 {
     private readonly IPostsService _service;
