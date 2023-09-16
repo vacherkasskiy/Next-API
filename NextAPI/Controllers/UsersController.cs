@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Exceptions.User;
@@ -9,6 +10,7 @@ namespace NextAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly IBaseService<User> _service;

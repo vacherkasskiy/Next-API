@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
@@ -9,6 +10,7 @@ namespace NextAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class MessagesController : ControllerBase
 {
     private readonly IMessagesService _service;
