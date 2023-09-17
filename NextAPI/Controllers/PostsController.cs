@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
@@ -39,8 +40,12 @@ public class PostsController : ControllerBase
     {
         try
         {
+            var currentUserId = int
+                .Parse(User
+                .FindFirstValue(ClaimTypes.NameIdentifier)!);
+            
             await _service.Add(new Post{
-                AuthorId = request.AuthorId,
+                AuthorId = currentUserId,
                 ReceiverId = request.ReceiverId,
                 Text = request.Text});
             return Ok("Post successfully added");

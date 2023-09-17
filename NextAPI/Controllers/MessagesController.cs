@@ -26,9 +26,10 @@ public class MessagesController : ControllerBase
     {
         try
         {
-            var currentUserId = int.Parse(
-                User
+            var currentUserId = int
+                .Parse(User
                 .FindFirstValue(ClaimTypes.NameIdentifier));
+            
             return Ok(await _service.GetAllForUsersPair(currentUserId, userId));
         }
         catch (MessageAuthorOrReceiverNotFoundException e)
@@ -43,9 +44,10 @@ public class MessagesController : ControllerBase
     {
         try
         {
-            var currentUserId = int.Parse(
-                User
+            var currentUserId = int
+                .Parse(User
                 .FindFirstValue(ClaimTypes.NameIdentifier));
+            
             var latest = await _service.GetLatestForUsersPair(currentUserId, userId);
             return Ok(latest);
         }
@@ -66,9 +68,13 @@ public class MessagesController : ControllerBase
     {
         try
         {
+            var currentUserId = int
+                    .Parse(User
+                    .FindFirstValue(ClaimTypes.NameIdentifier));
+            
             await _service.Add(new Message
             {
-                AuthorId = request.AuthorId,
+                AuthorId = currentUserId,
                 ReceiverId = request.ReceiverId,
                 Text = request.Text,
             });

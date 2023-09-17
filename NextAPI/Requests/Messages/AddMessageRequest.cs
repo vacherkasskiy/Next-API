@@ -1,3 +1,3 @@
 ﻿namespace NextAPI.Requests.Messages;
 
-public record AddMessageRequest(int AuthorId, int ReceiverId, string Text);
+public record AddMessageRequest(int ReceiverId, string Text);

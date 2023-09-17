@@ -53,13 +53,15 @@ public class UsersController : ControllerBase
 
     [Route("/users/current/set_status")]
     [HttpPatch]
-    public async Task<IActionResult> SetStatus(SetStatusRequest request)
+    public async Task<IActionResult> SetStatus(string status)
     {
         try
         {
-            var user = await _service.GetById(request.UserId);
-            user.Status = request.Status;
-            await _service.Update(user);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var currentUser = await _service.GetById(int.Parse(currentUserId));
+            
+            currentUser.Status = status;
+            await _service.Update(currentUser);
             return Ok();
         }
         catch (UserNotFoundByIdException e)

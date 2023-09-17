@@ -1,3 +1,3 @@
 ﻿namespace NextAPI.Requests.Posts;
 
-public record AddPostRequest(int AuthorId, int ReceiverId, string Text);
+public record AddPostRequest(int ReceiverId, string Text);
