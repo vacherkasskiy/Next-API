@@ -1,6 +1,7 @@
 ﻿using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions;
 using NextAPI.Exceptions.User;
 
 namespace NextAPI.Bll.Services;
@@ -8,6 +9,14 @@ namespace NextAPI.Bll.Services;
 public class UsersService : IBaseService<User>
 {
     private readonly IBaseRepository<User> _repository;
+    
+    private static bool IsImageUrl(string url)
+    {
+        using var client = new HttpClient();
+        var response = client.Send(new HttpRequestMessage(HttpMethod.Head, url));
+        return response.Content.Headers.ContentType!.MediaType!
+            .StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+    }
 
     public UsersService(IBaseRepository<User> repository)
     {
@@ -38,9 +47,19 @@ public class UsersService : IBaseService<User>
 
         return user;
     }
-
+    
     public async Task Update(User user)
     {
+        var usersWithSameEmail = (await _repository
+                .GetAll())
+            .Where(x => x.Email == user.Email)
+            .ToArray();
+
+        if (usersWithSameEmail.Length > 1)
+        {
+            throw new UserAlreadyExistsException();
+        }
+
         await _repository.Update(user);
     }
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
+using NextAPI.Exceptions;
 using NextAPI.Exceptions.Auth;
 using NextAPI.Requests.Auth;
 

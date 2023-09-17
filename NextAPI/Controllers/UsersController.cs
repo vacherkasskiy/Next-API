@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
+using NextAPI.Exceptions;
 using NextAPI.Exceptions.User;
 using NextAPI.Requests.Users;
 using NextAPI.Responses.Users;
@@ -49,7 +51,7 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Route("/users/set_status")]
+    [Route("/users/current/set_status")]
     [HttpPatch]
     public async Task<IActionResult> SetStatus(SetStatusRequest request)
     {
@@ -63,6 +65,38 @@ public class UsersController : ControllerBase
         catch (UserNotFoundByIdException e)
         {
             return BadRequest(e.Message);
+        }
+    }
+
+    [Route("/users/current/edit")]
+    [HttpPatch]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(403)]
+    public async Task<IActionResult> EditProfile(EditProfileRequest request)
+    {
+        try
+        {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var currentUser = await _service.GetById(int.Parse(currentUserId));
+
+            currentUser.Image = request.Image;
+            currentUser.Name = request.Name;
+            currentUser.Username = request.Username;
+            currentUser.Email = request.Email;
+            currentUser.City = request.City;
+            currentUser.Website = request.Website;
+            await _service.Update(currentUser);
+        
+            return Ok("Updated successfully");
+        }
+        catch (UserAlreadyExistsException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (InvalidAvatarImageLinkException e)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, e.Message);
         }
     }
 }

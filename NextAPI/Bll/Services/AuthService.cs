@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions;
 using NextAPI.Exceptions.Auth;
 
 namespace NextAPI.Bll.Services;
