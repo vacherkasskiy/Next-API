@@ -4,6 +4,7 @@ using NextAPI.Bll.Services;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions.User;
 using Tests.Comparers;
 using Tests.Fakers;
 using Xunit;
@@ -47,7 +48,7 @@ public class UsersServiceTests
         var userService = new UsersService(mockRepository.Object);
         
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => userService.GetById(invalidId));
+        await Assert.ThrowsAsync<UserNotFoundByIdException>(() => userService.GetById(invalidId));
         mockRepository.Verify(x => x.GetById(invalidId), Times.Once);
     }
 
@@ -125,7 +126,7 @@ public class UsersServiceTests
         var service = new UsersService(mockRepository.Object);
         
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => service.DeleteById(invalidUserId));
+        await Assert.ThrowsAsync<UserNotFoundByIdException>(() => service.DeleteById(invalidUserId));
         mockRepository.Verify(x => x.GetById(invalidUserId), Times.Once);
         mockRepository.Verify(x => x.Delete(It.IsAny<User>()), Times.Never);
     }

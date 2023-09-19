@@ -4,6 +4,7 @@ using NextAPI.Bll.Services;
 using NextAPI.Bll.Services.Interfaces;
 using NextAPI.Dal.Entities;
 using NextAPI.Dal.Repositories.Interfaces;
+using NextAPI.Exceptions.Post;
 using Tests.Comparers;
 using Tests.Fakers;
 using Xunit;
@@ -129,7 +130,7 @@ public class PostServiceTests
             mockUserRepository.Object);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => service.GetById(invalidId));
+        await Assert.ThrowsAsync<PostWrongIdException>(() => service.GetById(invalidId));
         mockPostRepository.Verify(x => x.GetById(invalidId), Times.Once);
     }
 
@@ -203,7 +204,7 @@ public class PostServiceTests
 
         // Act & Assert
         await Assert
-            .ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            .ThrowsAsync<PostAuthorOrReceiverNotFoundException>(async () =>
                 await service.Add(post));
         mockUserRepository.Verify(x => x.GetById(It.IsAny<int>()), Times.Exactly(2));
         mockUserRepository.Verify(x => x.GetById(authorId), Times.Once);
@@ -271,7 +272,7 @@ public class PostServiceTests
 
         // Act & Assert
         await Assert
-            .ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            .ThrowsAsync<PostWrongIdException>(async () =>
                 await service.DeleteById(invalidId));
         mockPostRepository
             .Verify(x =>
@@ -341,7 +342,7 @@ public class PostServiceTests
             mockUserRepository.Object);
         
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+        await Assert.ThrowsAsync<PostWithWrongReceiverIdException>(async () =>
             await service.GetForUser(invalidId));
         mockPostRepository.Verify(x => x.GetAll(), Times.Never);
         mockUserRepository.Verify(x => x.GetById(invalidId), Times.Once);

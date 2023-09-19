@@ -13,7 +13,7 @@ public static class PostFaker
         .RuleFor(x => x.ReceiverId, f => f.Random.Int(1, 1000))
         .RuleFor(x => x.AuthorId, f => f.Random.Int(1, 1000))
         .RuleFor(x => x.Text, f => f.Lorem.Sentence())
-        .FinishWith((f, post) =>
+        .FinishWith((_, post) =>
         {
             post.Receiver = UserFaker.Generate()
                 .Single()
@@ -28,7 +28,7 @@ public static class PostFaker
         lock (Lock)
         {
             var posts = new List<Post>();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 posts.Add(Faker.Generate());
             }

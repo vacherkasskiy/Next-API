@@ -27,8 +27,8 @@ public static class MessageFaker
     {
         lock (Lock)
         {
-            var messages = new System.Collections.Generic.List<Message>();
-            for (int i = 0; i < count; i++)
+            var messages = new List<Message>();
+            for (var i = 0; i < count; i++)
             {
                 messages.Add(Faker.Generate());
             }
