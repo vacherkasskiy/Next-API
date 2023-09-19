@@ -50,6 +50,22 @@ public class UsersController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    
+    [HttpGet]
+    [Route("/users/current")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> GetCurrent()
+    {
+        if (!User.Identity!.IsAuthenticated)
+        {
+            return BadRequest();
+        }
+        
+        var id = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var user = await _service.GetById(int.Parse(id));
+        return Ok(user);
+    }
 
     [Route("/users/current/set_status")]
     [HttpPatch]

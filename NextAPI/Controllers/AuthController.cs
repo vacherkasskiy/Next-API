@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,32 +15,13 @@ namespace NextAPI.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IBaseService<User> _userService;
 
     public AuthController(
-        IAuthService authService,
-        IBaseService<User> userService)
+        IAuthService authService)
     {
         _authService = authService;
-        _userService = userService;
     }
-    
-    [HttpGet]
-    [Route("/auth/get_current")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> GetCurrent()
-    {
-        if (!User.Identity!.IsAuthenticated)
-        {
-            return BadRequest();
-        }
-        
-        var id = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        var user = await _userService.GetById(int.Parse(id));
-        return Ok(user);
-    }
-    
+
     [HttpPost]
     [Route("/auth/register")]
     [ProducesResponseType(200)]
